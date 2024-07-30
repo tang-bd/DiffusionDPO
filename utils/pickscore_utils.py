@@ -9,12 +9,14 @@ processor_name_or_path = "laion/CLIP-ViT-H-14-laion2B-s32B-b79K"
 model_pretrained_name_or_path = "yuvalkirstain/PickScore_v1"
 
 
-class Selector():
-    
+class Selector:
+
     def __init__(self, device):
         self.device = device
         self.processor = AutoProcessor.from_pretrained(processor_name_or_path)
-        self.model = AutoModel.from_pretrained(model_pretrained_name_or_path).eval().to(device)
+        self.model = (
+            AutoModel.from_pretrained(model_pretrained_name_or_path).eval().to(device)
+        )
 
     def score(self, images, prompt, softmax=False):
 
@@ -35,7 +37,6 @@ class Selector():
             return_tensors="pt",
         ).to(self.device)
 
-
         with torch.no_grad():
             # embed
             image_embs = self.model.get_image_features(**image_inputs)
@@ -45,7 +46,7 @@ class Selector():
             text_embs = text_embs / torch.norm(text_embs, dim=-1, keepdim=True)
 
             # score
-            scores =  (text_embs @ image_embs.T)[0]
+            scores = (text_embs @ image_embs.T)[0]
 
             if softmax:
                 scores = self.model.logit_scale.exp() * scores
@@ -55,7 +56,11 @@ class Selector():
             else:
                 return scores.cpu().tolist()
 
-if __name__ == '__main__':
-    pil_images = [Image.open("my_amazing_images/1.jpg"), Image.open("my_amazing_images/2.jpg")]
+
+if __name__ == "__main__":
+    pil_images = [
+        Image.open("my_amazing_images/1.jpg"),
+        Image.open("my_amazing_images/2.jpg"),
+    ]
     prompt = "fantastic, increadible prompt"
     print(calc_probs(prompt, pil_images))

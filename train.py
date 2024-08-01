@@ -706,7 +706,7 @@ def main():
 
                 # load diffusers style into model
                 load_model = UNet2DConditionModel.from_pretrained(
-                    input_dir, subfolder="unet"
+                    os.path.join(input_dir, "unet")
                 )
                 model.register_to_config(**load_model.config)
 

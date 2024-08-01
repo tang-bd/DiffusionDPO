@@ -12,14 +12,15 @@ accelerate launch train.py \
   --pretrained_vae_model_name_or_path=$VAE \
   --dataset_name=$DATASET_NAME \
   --train_data_dir=$TRAIN_DATA_DIR \
-  --train_batch_size=2 \
-  --dataloader_num_workers=16 \
+  --train_batch_size=4 \
+  --dataloader_num_workers=32 \
   --gradient_accumulation_steps=128 \
   --max_train_steps=200 \
-  --lr_scheduler="constant_with_warmup" --lr_warmup_steps=200 \
+  --lr_scheduler="constant_with_warmup" --lr_warmup_steps=50 \
   --learning_rate=1e-8 --scale_lr \
-  --checkpointing_steps 200 \
+  --checkpointing_steps 20 \
   --beta_dpo 5000 \
-   --sdxl  \
+  --sdxl  \
+  --resume_from_checkpoint /data/bingda/dpo/checkpoint-100 \
   --output_dir="/data/bingda/dpo" \
   
